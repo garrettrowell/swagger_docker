@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  swagger-ui:
+    image: "swaggerapi/swagger-ui"
+    container_name: swagger-ui
+    ports:
+      - ${SWAGGER_UI_PORT:-8080}:8080
+    networks:
+      - local-swagger
+    environment:
+      - SWAGGER_JSON_URL=${SWAGGER_URL}
+      - VALIDATOR_URL=http://localhost:${SWAGGER_VALIDATOR_PORT:-8081}
+    depends_on:
+      - swagger-validator-v2
+  swagger-validator-v2:
+    image: "swaggerapi/swagger-validator-v2"
+    container_name: swagger-validator-v2
+    ports:
+      - ${SWAGGER_VALIDATOR_PORT:-8081}:8080
+    networks:
+      - local-swagger
+    environment:
+      - REJECT_LOCAL=false
+networks:
+  local-swagger:
+    name: local-swagger
